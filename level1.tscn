@@ -1,0 +1,32 @@
+[gd_scene format=3 uid="uid://ysw0x2p44bvd"]
+
+[ext_resource type="Texture2D" uid="uid://blx6mdd4t06ga" path="res://sprites/background/floor_bricks.png" id="1_dopym"]
+[ext_resource type="PackedScene" uid="uid://bwdx34squgurv" path="res://main_character.tscn" id="2_ootpb"]
+[ext_resource type="Texture2D" uid="uid://dyr54ngqnudei" path="res://sprites/test-01-01.png" id="3_ootpb"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_03w4c"]
+size = Vector2(71, 71)
+
+[node name="Node2D" type="Node2D" unique_id=1321996837]
+
+[node name="FloorBricks" type="Sprite2D" parent="." unique_id=1088566374]
+position = Vector2(586, 320)
+scale = Vector2(0.36577296, 0.47778586)
+texture = ExtResource("1_dopym")
+
+[node name="MainCharacter" parent="." unique_id=2067823367 instance=ExtResource("2_ootpb")]
+position = Vector2(104, 189)
+scale = Vector2(3.1959996, 3.1959996)
+
+[node name="CharacterBody2D" type="CharacterBody2D" parent="." unique_id=1899593444]
+collision_layer = 8
+
+[node name="Sprite2D" type="Sprite2D" parent="CharacterBody2D" unique_id=49422912]
+position = Vector2(428, 540)
+texture = ExtResource("3_ootpb")
+hframes = 5
+vframes = 3
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CharacterBody2D" unique_id=2089317458]
+position = Vector2(428.5, 539.5)
+shape = SubResource("RectangleShape2D_03w4c")
