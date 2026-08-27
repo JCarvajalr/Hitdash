@@ -1,9 +1,11 @@
+class_name MainCharacter
 extends CharacterBody2D
 
 @export var speed: float = 200.0
 @export var dash_speed: float = 600.0
 @export var dash_duration: float = 0.15
 @export var dash_cooldown: float = 0.5
+@export var attack_damage: float = 35
 
 @onready var character_sprite: AnimatedSprite2D = $CharacterSprite
 @onready var attack_hitbox: CollisionShape2D = $AttackArea/CollisionShape2D
@@ -96,6 +98,6 @@ func update_animation(direction):
 		character_sprite.play("run_" + last_direction_label)
 
 
-func _on_attack_area_body_entered(body: Node2D) -> void:
-	print(body.name)
-	pass # Replace with function body.
+func _on_attack_area_body_entered(body) -> void:
+	body.hurt(attack_damage)
+	

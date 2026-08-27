@@ -563,7 +563,7 @@ radius = 16.13445
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_02psc"]
 size = Vector2(10, 21)
 
-[node name="MainCharacter" type="CharacterBody2D" unique_id=2067823367]
+[node name="MainCharacter" type="CharacterBody2D" unique_id=2067823367 groups=["Player"]]
 script = ExtResource("1_wmkwl")
 speed = 400.0
 dash_speed = 1300.0
@@ -576,7 +576,9 @@ animation = &"smoke"
 
 [node name="CharacterSprite" type="AnimatedSprite2D" parent="." unique_id=1248504392]
 sprite_frames = SubResource("SpriteFrames_u5bk5")
-animation = &"idle_down"
+animation = &"attack_down"
+frame = 7
+frame_progress = 1.0
 
 [node name="AttackArea" type="Area2D" parent="." unique_id=1001741421]
 visible = false
@@ -588,7 +590,8 @@ shape = SubResource("CircleShape2D_03w4c")
 disabled = true
 debug_color = Color(0.5321948, 0.5700769, 0.061398543, 0.41960785)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1271566361]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1271566361 groups=["Player"]]
+visible = false
 position = Vector2(0, 0.5)
 shape = SubResource("RectangleShape2D_02psc")
 
