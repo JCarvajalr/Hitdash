@@ -4,8 +4,10 @@ extends CharacterBody2D
 @export var dash_speed: float = 600.0
 @export var dash_duration: float = 0.15
 @export var dash_cooldown: float = 0.5
-@onready var animated_sprite_2d: AnimatedSprite2D = $AnimatedSprite2D
+
+@onready var character_sprite: AnimatedSprite2D = $CharacterSprite
 @onready var attack_hitbox: CollisionShape2D = $AttackArea/CollisionShape2D
+@onready var dash_effect: AnimatedSprite2D = $DashEffect
 
 var last_direction := Vector2.DOWN
 var last_direction_label = "down"
@@ -45,15 +47,15 @@ func _physics_process(delta):
 func start_attack():
 	is_attacking = true
 	attack_hitbox.disabled = false
-	animated_sprite_2d.play("attack_" + last_direction_label)
-	await (animated_sprite_2d.animation_finished)
+	character_sprite.play("attack_" + last_direction_label)
+	await (character_sprite.animation_finished)
 	attack_hitbox.disabled = true
 	is_attacking = false
 
 func start_dash():
 	is_dashing = true
 	can_dash = false
-
+	dash_effect.play("smoke")
 	# Dash hacia la última dirección
 	velocity = last_direction * dash_speed
 
@@ -89,9 +91,9 @@ func update_dir():
 func update_animation(direction):
 	if (is_attacking): return
 	if (direction == Vector2.ZERO):
-		animated_sprite_2d.play("idle_" + last_direction_label)
+		character_sprite.play("idle_" + last_direction_label)
 	else:
-		animated_sprite_2d.play("run_" + last_direction_label)
+		character_sprite.play("run_" + last_direction_label)
 
 
 func _on_attack_area_body_entered(body: Node2D) -> void:

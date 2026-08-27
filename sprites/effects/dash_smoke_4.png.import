@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://kd360fonmebj"
-path="res://.godot/imported/main_idle_attack.png-0da2b9c6a297bc63a91b8a1d6cbb4603.ctex"
+uid="uid://kbj0trfhmvdh"
+path="res://.godot/imported/dash_smoke_4.png-e485672f6238de28ce303ec04a93c10f.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://sprites/characters/main_idle_attack.png"
-dest_files=["res://.godot/imported/main_idle_attack.png-0da2b9c6a297bc63a91b8a1d6cbb4603.ctex"]
+source_file="res://sprites/effects/dash_smoke_4.png"
+dest_files=["res://.godot/imported/dash_smoke_4.png-e485672f6238de28ce303ec04a93c10f.ctex"]
 
 [params]
 

@@ -1,13 +1,17 @@
 [gd_scene format=3 uid="uid://bwdx34squgurv"]
 
-[ext_resource type="Script" uid="uid://c2tk0fll5g41h" path="res://main_character.gd" id="1_wmkwl"]
-[ext_resource type="Texture2D" uid="uid://kd360fonmebj" path="res://sprites/characters/main_idle_attack.png" id="2_2q423"]
-[ext_resource type="Texture2D" uid="uid://cqqknhvull0ur" path="res://sprites/characters/main_idle.png" id="2_uvl38"]
-[ext_resource type="Texture2D" uid="uid://de7xcqy4up8wk" path="res://sprites/characters/main_run.png" id="3_uvl38"]
+[ext_resource type="Script" uid="uid://c2tk0fll5g41h" path="res://Entities/Character/main_character.gd" id="1_wmkwl"]
+[ext_resource type="Texture2D" uid="uid://kd360fonmebj" path="res://sprites/characters/main/main_idle_attack.png" id="2_2q423"]
+[ext_resource type="Texture2D" uid="uid://cqqknhvull0ur" path="res://sprites/characters/main/main_idle.png" id="2_uvl38"]
+[ext_resource type="Texture2D" uid="uid://de7xcqy4up8wk" path="res://sprites/characters/main/main_run.png" id="3_uvl38"]
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_kh5iw"]
-radius = 27.0
-height = 106.0
+[sub_resource type="SpriteFrames" id="SpriteFrames_03w4c"]
+animations = [{
+"frames": [],
+"loop": 0,
+"name": &"smoke",
+"speed": 12.0
+}]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_3dsai"]
 atlas = ExtResource("2_2q423")
@@ -556,24 +560,26 @@ animations = [{
 [sub_resource type="CircleShape2D" id="CircleShape2D_03w4c"]
 radius = 16.13445
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_02psc"]
+size = Vector2(10, 21)
+
 [node name="MainCharacter" type="CharacterBody2D" unique_id=2067823367]
 script = ExtResource("1_wmkwl")
 speed = 400.0
 dash_speed = 1300.0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1271566361]
-visible = false
-position = Vector2(11, -1)
-shape = SubResource("CapsuleShape2D_kh5iw")
+[node name="DashEffect" type="AnimatedSprite2D" parent="." unique_id=1451685281]
+position = Vector2(13, 10)
+scale = Vector2(0.054999985, 0.055)
+sprite_frames = SubResource("SpriteFrames_03w4c")
+animation = &"smoke"
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1248504392]
+[node name="CharacterSprite" type="AnimatedSprite2D" parent="." unique_id=1248504392]
 sprite_frames = SubResource("SpriteFrames_u5bk5")
-animation = &"attack_down"
-frame = 5
-
-[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=459521109]
+animation = &"idle_down"
 
 [node name="AttackArea" type="Area2D" parent="." unique_id=1001741421]
+visible = false
 collision_mask = 8
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="AttackArea" unique_id=2091518833]
@@ -581,5 +587,9 @@ position = Vector2(1, 9)
 shape = SubResource("CircleShape2D_03w4c")
 disabled = true
 debug_color = Color(0.5321948, 0.5700769, 0.061398543, 0.41960785)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1271566361]
+position = Vector2(0, 0.5)
+shape = SubResource("RectangleShape2D_02psc")
 
 [connection signal="body_entered" from="AttackArea" to="." method="_on_attack_area_body_entered"]

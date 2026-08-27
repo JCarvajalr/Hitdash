@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bdxk0jabukob"
-path="res://.godot/imported/Swordsman_lvl2_Walk_Attack_without_shadow.png-c413762a7e2fa5b48ebe012d603e2db0.ctex"
+uid="uid://bk64d62mndwjd"
+path="res://.godot/imported/dash_smoke_3.png-c92fea77f827754ccfda577712155993.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://sprites/characters/Swordsman_lvl2_Walk_Attack_without_shadow.png"
-dest_files=["res://.godot/imported/Swordsman_lvl2_Walk_Attack_without_shadow.png-c413762a7e2fa5b48ebe012d603e2db0.ctex"]
+source_file="res://sprites/effects/dash_smoke_3.png"
+dest_files=["res://.godot/imported/dash_smoke_3.png-c92fea77f827754ccfda577712155993.ctex"]
 
 [params]
 

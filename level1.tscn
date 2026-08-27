@@ -1,8 +1,9 @@
 [gd_scene format=3 uid="uid://ysw0x2p44bvd"]
 
 [ext_resource type="Texture2D" uid="uid://blx6mdd4t06ga" path="res://sprites/background/floor_bricks.png" id="1_dopym"]
-[ext_resource type="PackedScene" uid="uid://bwdx34squgurv" path="res://main_character.tscn" id="2_ootpb"]
+[ext_resource type="PackedScene" uid="uid://bwdx34squgurv" path="res://Entities/Character/main_character.tscn" id="2_ootpb"]
 [ext_resource type="Texture2D" uid="uid://dyr54ngqnudei" path="res://sprites/test-01-01.png" id="3_ootpb"]
+[ext_resource type="PackedScene" uid="uid://plkdpqq5o7qp" path="res://Entities/Enemies/orc_1.tscn" id="4_v38iq"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_03w4c"]
 size = Vector2(71, 71)
@@ -30,3 +31,7 @@ vframes = 3
 [node name="CollisionShape2D" type="CollisionShape2D" parent="CharacterBody2D" unique_id=2089317458]
 position = Vector2(428.5, 539.5)
 shape = SubResource("RectangleShape2D_03w4c")
+
+[node name="OrcEnemie" parent="." unique_id=322997897 instance=ExtResource("4_v38iq")]
+position = Vector2(493, 392)
+scale = Vector2(3, 3)
