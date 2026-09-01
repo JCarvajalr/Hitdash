@@ -1,11 +1,17 @@
 class_name MainCharacter
 extends CharacterBody2D
 
+signal health_changed(current: float, maximum: float)
+signal died
+
 @export var speed: float = 200.0
 @export var dash_speed: float = 600.0
 @export var dash_duration: float = 0.15
 @export var dash_cooldown: float = 0.5
 @export var attack_damage: float = 35
+@export var max_health: float = 100.0
+## Segundos de invulnerabilidad tras recibir un golpe.
+@export var invulnerable_time: float = 0.6
 
 @onready var character_sprite: AnimatedSprite2D = $CharacterSprite
 @onready var attack_hitbox: CollisionShape2D = $AttackArea/CollisionShape2D
@@ -18,10 +24,20 @@ var can_dash: bool = true
 var is_dashing: bool = false
 var is_attacking: bool = false
 
+var health: float
+var is_dead: bool = false
+var is_invulnerable: bool = false
+
 func _ready() -> void:
 	attack_hitbox.disabled = true
+	health = max_health
+	health_changed.emit(health, max_health)
 
 func _physics_process(delta):
+	if is_dead:
+		velocity = Vector2.ZERO
+		move_and_slide()
+		return
 	var direction := Input.get_vector(
 		"move_left",
 		"move_right",
@@ -99,5 +115,36 @@ func update_animation(direction):
 
 
 func _on_attack_area_body_entered(body) -> void:
-	body.hurt(attack_damage)
+	if body.has_method("hurt"):
+		body.hurt(attack_damage)
+
+func hurt(damage: float) -> void:
+	if is_dead or is_invulnerable:
+		return
+	health = max(health - damage, 0.0)
+	health_changed.emit(health, max_health)
+	if health <= 0.0:
+		die()
+		return
+	_flash_damage()
+	is_invulnerable = true
+	await get_tree().create_timer(invulnerable_time).timeout
+	is_invulnerable = false
+
+func _flash_damage() -> void:
+	var tween := create_tween()
+	tween.tween_property(character_sprite, "modulate", Color(1, 0.35, 0.35), 0.08)
+	tween.tween_property(character_sprite, "modulate", Color.WHITE, 0.22)
+
+func die() -> void:
+	if is_dead:
+		return
+	is_dead = true
+	velocity = Vector2.ZERO
+	is_attacking = false
+	is_dashing = false
+	attack_hitbox.set_deferred("disabled", true)
+	character_sprite.play("idle_" + last_direction_label)
+	character_sprite.modulate = Color(0.45, 0.45, 0.5)
+	died.emit()
 	
