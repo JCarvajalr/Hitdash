@@ -1019,7 +1019,7 @@ animations = [{
 }]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_03w4c"]
-size = Vector2(24, 31)
+size = Vector2(13.25, 19)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_m5ati"]
 radius = 22.017393
@@ -1035,13 +1035,11 @@ stop_distance = 110.0
 
 [node name="CharacterSprite" type="AnimatedSprite2D" parent="." unique_id=13957459]
 sprite_frames = SubResource("SpriteFrames_03w4c")
-animation = &"attack_up"
+animation = &"hurt_left"
 autoplay = "idle_down"
-frame = 4
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=525719476]
 visible = false
-position = Vector2(0, -3.5)
 shape = SubResource("RectangleShape2D_03w4c")
 
 [node name="RestartAttackTimer" type="Timer" parent="." unique_id=232960871]
@@ -1049,6 +1047,7 @@ wait_time = 2.0
 one_shot = true
 
 [node name="AttackArea" type="Area2D" parent="." unique_id=1131124944]
+visible = false
 
 [node name="AttackHitbox" type="CollisionShape2D" parent="AttackArea" unique_id=447916357]
 position = Vector2(0, -7.875)
