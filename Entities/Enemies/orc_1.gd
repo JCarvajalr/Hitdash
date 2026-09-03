@@ -12,7 +12,6 @@ signal died
 @onready var attack_hitbox: CollisionShape2D = $AttackArea/AttackHitbox
 @onready var attack_area: Area2D = $AttackArea
 var player
-var is_animating: bool = false
 var is_attacking: bool = false
 var can_attack: bool = true
 var is_dead: bool = false
@@ -92,10 +91,10 @@ func hurt(damage):
 	if health <= 0.0:
 		_die()
 		return
-	character_sprite.play("hurt_" + last_direction_label)
-	is_animating = true
-	await (character_sprite.animation_finished)
-	is_animating = false
+		
+	character_sprite.modulate = Color(1, 0.3, 0.3)
+	await get_tree().create_timer(0.1).timeout
+	character_sprite.modulate = Color.WHITE
 
 func _update_health_bar() -> void:
 	if _health_bar == null:
@@ -147,7 +146,7 @@ func update_dir():
 	last_direction_label = dir[0]
 
 func update_animation(direction):
-	if (is_animating || is_attacking): return
+	if (is_attacking): return
 	if (direction == Vector2.ZERO):
 		character_sprite.play("idle_" + last_direction_label)
 	elif (speed >= 180):

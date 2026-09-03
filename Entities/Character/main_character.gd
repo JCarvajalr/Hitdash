@@ -127,24 +127,26 @@ func hurt(damage: float) -> void:
 		die()
 		return
 	_flash_damage()
-	is_invulnerable = true
-	await get_tree().create_timer(invulnerable_time).timeout
-	is_invulnerable = false
+	#is_invulnerable = true
+	#await get_tree().create_timer(invulnerable_time).timeout
+	#is_invulnerable = false
 
 func _flash_damage() -> void:
 	var tween := create_tween()
-	tween.tween_property(character_sprite, "modulate", Color(1, 0.35, 0.35), 0.08)
+	tween.tween_property(character_sprite, "modulate", Color(1, 0.35, 0.35), 0.2)
 	tween.tween_property(character_sprite, "modulate", Color.WHITE, 0.22)
 
 func die() -> void:
 	if is_dead:
 		return
 	is_dead = true
+	set_physics_process(false)
 	velocity = Vector2.ZERO
 	is_attacking = false
 	is_dashing = false
 	attack_hitbox.set_deferred("disabled", true)
-	character_sprite.play("idle_" + last_direction_label)
-	character_sprite.modulate = Color(0.45, 0.45, 0.5)
+	character_sprite.modulate = Color.WHITE
+	character_sprite.play("death_" + last_direction_label)
+	await character_sprite.animation_finished
 	died.emit()
 	
