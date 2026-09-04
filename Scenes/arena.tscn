@@ -1,40 +1,63 @@
-[gd_scene load_steps=8 format=3 uid="uid://b1arena0hitda"]
+[gd_scene format=3 uid="uid://b1arena0hitda"]
 
 [ext_resource type="Texture2D" uid="uid://blx6mdd4t06ga" path="res://sprites/background/floor_bricks.png" id="1_floor"]
 [ext_resource type="PackedScene" uid="uid://bwdx34squgurv" path="res://Entities/Character/main_character.tscn" id="2_player"]
-[ext_resource type="PackedScene" uid="uid://plkdpqq5o7qp" path="res://Entities/Enemies/orc_1.tscn" id="3_orc"]
-[ext_resource type="Script" path="res://Scenes/arena.gd" id="4_arena"]
-[ext_resource type="Script" path="res://Scenes/enemy_spawner.gd" id="5_spawner"]
-[ext_resource type="Script" path="res://Scenes/hud.gd" id="6_hud"]
-[ext_resource type="Script" path="res://Scenes/game_over_screen.gd" id="7_gameover"]
+[ext_resource type="Script" uid="uid://c12ul5uj4beri" path="res://Scenes/arena.gd" id="4_arena"]
+[ext_resource type="Script" uid="uid://bo61m3iwmsp0x" path="res://Scenes/enemy_spawner.gd" id="5_spawner"]
+[ext_resource type="Script" uid="uid://ugdpfi8cw1aq" path="res://Scenes/hud.gd" id="6_hud"]
+[ext_resource type="Script" uid="uid://c20xloyyy4e6f" path="res://Scenes/game_over_screen.gd" id="7_gameover"]
 
-[node name="Arena" type="Node2D"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_top_bottom"]
+size = Vector2(1200, 32)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_left_right"]
+size = Vector2(32, 700)
+
+[node name="Arena" type="Node2D" unique_id=1884563454]
+y_sort_enabled = true
 script = ExtResource("4_arena")
 
-[node name="FloorBricks" type="Sprite2D" parent="."]
+[node name="FloorBricks" type="Sprite2D" parent="." unique_id=550495749]
+z_index = -2
 position = Vector2(586, 320)
 scale = Vector2(0.36577296, 0.47778586)
 texture = ExtResource("1_floor")
 
-[node name="MainCharacter" parent="." instance=ExtResource("2_player")]
+[node name="MainCharacter" parent="." unique_id=1955240089 instance=ExtResource("2_player")]
 position = Vector2(576, 340)
 scale = Vector2(2.8, 2.8)
 
-[node name="EnemySpawner" type="Node2D" parent="."]
+[node name="EnemySpawner" type="Node2D" parent="." unique_id=916918797]
 script = ExtResource("5_spawner")
-orc_scene = ExtResource("3_orc")
-spawn_area = Rect2(64, 64, 1024, 520)
-min_distance_to_player = 220.0
-enemy_scale = Vector2(2.8, 2.8)
-total_to_spawn = -1
 
-[node name="SpawnTimer" type="Timer" parent="EnemySpawner"]
+[node name="SpawnTimer" type="Timer" parent="EnemySpawner" unique_id=629823700]
 wait_time = 2.0
 autostart = true
 
-[node name="HUD" type="CanvasLayer" parent="."]
+[node name="HUD" type="CanvasLayer" parent="." unique_id=139888650]
 script = ExtResource("6_hud")
 
-[node name="GameOverScreen" type="CanvasLayer" parent="."]
+[node name="GameOverScreen" type="CanvasLayer" parent="." unique_id=578536798]
 process_mode = 3
 script = ExtResource("7_gameover")
+
+[node name="ScreenBoundaries" type="StaticBody2D" parent="." unique_id=987654321]
+visible = false
+collision_layer = 15
+collision_mask = 0
+
+[node name="Top" type="CollisionShape2D" parent="ScreenBoundaries" unique_id=987654322]
+position = Vector2(576, -16)
+shape = SubResource("RectangleShape2D_top_bottom")
+
+[node name="Bottom" type="CollisionShape2D" parent="ScreenBoundaries" unique_id=987654323]
+position = Vector2(576, 664)
+shape = SubResource("RectangleShape2D_top_bottom")
+
+[node name="Left" type="CollisionShape2D" parent="ScreenBoundaries" unique_id=987654324]
+position = Vector2(-16, 324)
+shape = SubResource("RectangleShape2D_left_right")
+
+[node name="Right" type="CollisionShape2D" parent="ScreenBoundaries" unique_id=987654325]
+position = Vector2(1168, 324)
+shape = SubResource("RectangleShape2D_left_right")

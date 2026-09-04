@@ -784,6 +784,8 @@ radius = 16.13445
 size = Vector2(10, 17)
 
 [node name="MainCharacter" type="CharacterBody2D" unique_id=2067823367 groups=["Player"]]
+collision_layer = 513
+collision_mask = 9
 script = ExtResource("1_wmkwl")
 speed = 400.0
 dash_speed = 1300.0

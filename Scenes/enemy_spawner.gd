@@ -12,12 +12,12 @@ signal wave_changed(index: int, display_name: String, endless_level: int)
 signal kills_changed(kills: int)
 
 @export_group("Escenas de enemigos")
-@export var orc_scene: PackedScene = preload("res://Entities/Enemies/orc_1.tscn")
+@export var orc_scene: PackedScene = preload("res://Entities/Enemies/orcs/orc_1.tscn")
 @export var vampire_1_scene: PackedScene = preload("res://Entities/Enemies/vampire_1.tscn")
 @export var vampire_2_scene: PackedScene = preload("res://Entities/Enemies/vampire_2.tscn")
 @export var vampire_3_scene: PackedScene = preload("res://Entities/Enemies/vampire_3.tscn")
 ## Slime de lava: cuerpo a cuerpo que se enfurece (mas rapido y agresivo) al recibir dano.
-@export var slime_3_scene: PackedScene = preload("res://Entities/Enemies/slime_3.tscn")
+@export var slime_3_scene: PackedScene = preload("res://Entities/Enemies/slimes/slime_3.tscn")
 
 @export_group("Generacion")
 ## Rectangulo (en coordenadas globales) donde pueden aparecer.

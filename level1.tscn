@@ -2,8 +2,8 @@
 
 [ext_resource type="Texture2D" uid="uid://blx6mdd4t06ga" path="res://sprites/background/floor_bricks.png" id="1_dopym"]
 [ext_resource type="PackedScene" uid="uid://bwdx34squgurv" path="res://Entities/Character/main_character.tscn" id="2_ootpb"]
-[ext_resource type="PackedScene" uid="uid://d3kncx2mdi7fg" path="res://Entities/Enemies/slime_3.tscn" id="4_v8kj3"]
-[ext_resource type="PackedScene" uid="uid://plkdpqq5o7qp" path="res://Entities/Enemies/orc_1.tscn" id="4_v38iq"]
+[ext_resource type="PackedScene" uid="uid://d3kncx2mdi7fg" path="res://Entities/Enemies/slimes/slime_3.tscn" id="4_v8kj3"]
+[ext_resource type="PackedScene" uid="uid://plkdpqq5o7qp" path="res://Entities/Enemies/orcs/orc_1.tscn" id="4_v38iq"]
 
 [node name="Node2D" type="Node2D" unique_id=1321996837]
 y_sort_enabled = true
