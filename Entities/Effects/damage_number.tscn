@@ -1,0 +1,14 @@
+[gd_scene format=3 uid="uid://ddiine0rkimun"]
+
+[ext_resource type="Script" uid="uid://dwyf63sgixxsh" path="res://Entities/Effects/damage_number.gd" id="1_dhsul"]
+[ext_resource type="FontFile" uid="uid://5mjp66420bja" path="res://sprites/fonts/Poppins-Medium.ttf" id="1_doufc"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_dhsul"]
+font = ExtResource("1_doufc")
+font_color = Color(0.7393165, 0, 0.031831753, 1)
+outline_size = 2
+outline_color = Color(0.094614856, 3.9745473e-07, 0.0005114238, 1)
+
+[node name="DamageNumber" type="Label" unique_id=1404458656]
+label_settings = SubResource("LabelSettings_dhsul")
+script = ExtResource("1_dhsul")

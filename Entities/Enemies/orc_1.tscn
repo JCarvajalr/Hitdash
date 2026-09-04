@@ -1087,7 +1087,6 @@ speed = 150.0
 stop_distance = 100.0
 
 [node name="CharacterSprite" type="AnimatedSprite2D" parent="." unique_id=13957459]
-y_sort_enabled = true
 sprite_frames = SubResource("SpriteFrames_03w4c")
 animation = &"death_up"
 autoplay = "idle_down"

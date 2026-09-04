@@ -1292,7 +1292,9 @@ size = Vector2(12, 11)
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1542577915]
 sprite_frames = SubResource("SpriteFrames_03w4c")
-animation = &"idle_down"
+animation = &"attack_down"
+frame = 9
+frame_progress = 1.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1633905933]
 visible = false

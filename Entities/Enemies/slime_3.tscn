@@ -1,5 +1,6 @@
 [gd_scene format=3 uid="uid://d3kncx2mdi7fg"]
 
+[ext_resource type="Script" uid="uid://da8f5qkgt3u4b" path="res://Entities/Enemies/slime_3.gd" id="1_c1040"]
 [ext_resource type="Texture2D" uid="uid://21c0odjhuy45" path="res://sprites/characters/slimes/slime3_attack.png" id="1_sisqj"]
 [ext_resource type="Texture2D" uid="uid://pdv4ly8qju37" path="res://sprites/characters/slimes/slime3_death.png" id="2_c1040"]
 [ext_resource type="Texture2D" uid="uid://cuu5aqjjak3mq" path="res://sprites/characters/slimes/slime3_idle.png" id="3_i2c40"]
@@ -1260,13 +1261,40 @@ animations = [{
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_03w4c"]
 size = Vector2(13, 11)
 
-[node name="Slime3" type="CharacterBody2D" unique_id=373794746]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_l7l2g"]
+size = Vector2(24.523237, 24.630867)
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1658139936]
+[node name="Slime3" type="CharacterBody2D" unique_id=373794746]
+collision_layer = 9
+collision_mask = 10
+script = ExtResource("1_c1040")
+health = 100.0
+attack_damage = 25.0
+enraged_speed = 340.0
+enraged_attack_cooldown = 0.4
+enraged_attack_anim_speed = 1.6
+
+[node name="CharacterSprite" type="AnimatedSprite2D" parent="." unique_id=1658139936]
 sprite_frames = SubResource("SpriteFrames_03w4c")
-animation = &"idle_down"
+animation = &"attack_down"
+frame = 5
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=2141754472]
 visible = false
 position = Vector2(0.5, 0.5)
 shape = SubResource("RectangleShape2D_03w4c")
+
+[node name="RestartAttackTimer" type="Timer" parent="." unique_id=606218398]
+wait_time = 2.5
+one_shot = true
+
+[node name="AttackArea" type="Area2D" parent="." unique_id=821006516]
+visible = false
+
+[node name="AttackHitbox" type="CollisionShape2D" parent="AttackArea" unique_id=1240617878]
+position = Vector2(0, -5.0000005)
+scale = Vector2(1.631106, 1.7051775)
+shape = SubResource("RectangleShape2D_l7l2g")
+disabled = true
+
+[connection signal="timeout" from="RestartAttackTimer" to="." method="_on_restart_attack_timer_timeout"]

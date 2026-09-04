@@ -9,7 +9,6 @@
 [ext_resource type="Script" uid="uid://c20xloyyy4e6f" path="res://Scenes/game_over_screen.gd" id="7_gameover"]
 
 [node name="Arena" type="Node2D" unique_id=985161880]
-y_sort_enabled = true
 script = ExtResource("4_arena")
 
 [node name="FloorBricks" type="Sprite2D" parent="." unique_id=521150031]

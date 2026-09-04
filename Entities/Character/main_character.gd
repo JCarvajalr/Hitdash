@@ -8,12 +8,10 @@ signal died
 @export var dash_speed: float = 600.0
 @export var dash_duration: float = 0.15
 @export var dash_cooldown: float = 0.5
-## Tiempo de invulnerabilidad durante el dash.
 @export var dash_invulnerable_time: float = 0.2
 @export var attack_damage: float = 35
 @export var max_health: float = 100.0
-## Segundos de invulnerabilidad tras recibir un golpe.
-@export var invulnerable_time: float = 0.6
+@export var damage_number_scene: PackedScene
 
 @onready var character_sprite: AnimatedSprite2D = $CharacterSprite
 @onready var attack_hitbox: CollisionShape2D = $AttackArea/CollisionShape2D
@@ -34,6 +32,7 @@ func _ready() -> void:
 	attack_hitbox.disabled = true
 	health = max_health
 	health_changed.emit(health, max_health)
+	character_sprite.frame_changed.connect(_on_frame_changed)
 
 func _physics_process(delta):
 	if is_dead:
@@ -66,10 +65,10 @@ func _physics_process(delta):
 
 func start_attack():
 	is_attacking = true
-	attack_hitbox.disabled = false
+	#attack_hitbox.disabled = false
 	character_sprite.play("attack_" + last_direction_label)
 	await (character_sprite.animation_finished)
-	attack_hitbox.disabled = true
+	#attack_hitbox.disabled = true
 	is_attacking = false
 
 func start_dash():
@@ -151,29 +150,11 @@ func hurt(damage: float) -> void:
 	_flash_damage()
 
 func _spawn_damage_number(amount: float) -> void:
-	var label := Label.new()
-	label.text = "-%d" % roundi(amount)
-	label.add_theme_font_size_override("font_size", 18)
-	label.add_theme_color_override("font_color", Color(0.95, 0.15, 0.15))
-	label.add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0, 0.9))
-	label.add_theme_constant_override("outline_size", 4)
-	label.z_index = 100
+	var damage_number = damage_number_scene.instantiate()
 
-	var parent_node := get_parent()
-	if parent_node == null:
-		parent_node = self
-
-	parent_node.add_child(label)
-
-	var side := 1.0 if randf() > 0.5 else -1.0
-	var offset := Vector2(randf_range(12.0, 24.0) * side, randf_range(-35.0, -25.0))
-	label.global_position = global_position + offset
-
-	var tween := label.create_tween()
-	tween.set_parallel(true)
-	tween.tween_property(label, "global_position:y", label.global_position.y - 30.0, 0.6).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-	tween.tween_property(label, "modulate:a", 0.0, 0.6).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
-	tween.chain().tween_callback(label.queue_free)
+	get_parent().add_child(damage_number)
+	damage_number.global_position = global_position + Vector2(0, -30)
+	damage_number.show_damage(amount)
 
 func _flash_damage() -> void:
 	var tween := create_tween()
@@ -194,3 +175,9 @@ func die() -> void:
 	await character_sprite.animation_finished
 	died.emit()
 	
+func _on_frame_changed():
+	if (!is_attacking): return
+	if (character_sprite.frame == 3):
+		attack_hitbox.disabled = false
+	if (character_sprite.frame == 5):
+		attack_hitbox.disabled = true
