@@ -1,37 +1,40 @@
-[gd_scene format=3 uid="uid://b1arena0hitda"]
+[gd_scene load_steps=8 format=3 uid="uid://b1arena0hitda"]
 
 [ext_resource type="Texture2D" uid="uid://blx6mdd4t06ga" path="res://sprites/background/floor_bricks.png" id="1_floor"]
 [ext_resource type="PackedScene" uid="uid://bwdx34squgurv" path="res://Entities/Character/main_character.tscn" id="2_player"]
 [ext_resource type="PackedScene" uid="uid://plkdpqq5o7qp" path="res://Entities/Enemies/orc_1.tscn" id="3_orc"]
-[ext_resource type="Script" uid="uid://c12ul5uj4beri" path="res://Scenes/arena.gd" id="4_arena"]
-[ext_resource type="Script" uid="uid://bo61m3iwmsp0x" path="res://Scenes/enemy_spawner.gd" id="5_spawner"]
-[ext_resource type="Script" uid="uid://ugdpfi8cw1aq" path="res://Scenes/hud.gd" id="6_hud"]
-[ext_resource type="Script" uid="uid://c20xloyyy4e6f" path="res://Scenes/game_over_screen.gd" id="7_gameover"]
+[ext_resource type="Script" path="res://Scenes/arena.gd" id="4_arena"]
+[ext_resource type="Script" path="res://Scenes/enemy_spawner.gd" id="5_spawner"]
+[ext_resource type="Script" path="res://Scenes/hud.gd" id="6_hud"]
+[ext_resource type="Script" path="res://Scenes/game_over_screen.gd" id="7_gameover"]
 
-[node name="Arena" type="Node2D" unique_id=985161880]
+[node name="Arena" type="Node2D"]
 script = ExtResource("4_arena")
 
-[node name="FloorBricks" type="Sprite2D" parent="." unique_id=521150031]
-z_index = -2
+[node name="FloorBricks" type="Sprite2D" parent="."]
 position = Vector2(586, 320)
 scale = Vector2(0.36577296, 0.47778586)
 texture = ExtResource("1_floor")
 
-[node name="MainCharacter" parent="." unique_id=1087030297 instance=ExtResource("2_player")]
+[node name="MainCharacter" parent="." instance=ExtResource("2_player")]
 position = Vector2(576, 340)
 scale = Vector2(2.8, 2.8)
 
-[node name="EnemySpawner" type="Node2D" parent="." unique_id=6311905]
+[node name="EnemySpawner" type="Node2D" parent="."]
 script = ExtResource("5_spawner")
-enemy_scene = ExtResource("3_orc")
+orc_scene = ExtResource("3_orc")
+spawn_area = Rect2(64, 64, 1024, 520)
+min_distance_to_player = 220.0
+enemy_scale = Vector2(2.8, 2.8)
+total_to_spawn = -1
 
-[node name="SpawnTimer" type="Timer" parent="EnemySpawner" unique_id=1878434155]
+[node name="SpawnTimer" type="Timer" parent="EnemySpawner"]
 wait_time = 2.0
 autostart = true
 
-[node name="HUD" type="CanvasLayer" parent="." unique_id=1996948212]
+[node name="HUD" type="CanvasLayer" parent="."]
 script = ExtResource("6_hud")
 
-[node name="GameOverScreen" type="CanvasLayer" parent="." unique_id=640889545]
+[node name="GameOverScreen" type="CanvasLayer" parent="."]
 process_mode = 3
 script = ExtResource("7_gameover")

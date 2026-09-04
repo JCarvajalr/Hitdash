@@ -1,3 +1,6 @@
 # Godot 4+ specific ignores
 .godot/
 /android/
+
+# Packs de sprites descargados: al repo van los PNG ya extraidos, no el .zip
+sprites/*.zip

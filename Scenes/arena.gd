@@ -2,13 +2,17 @@ extends Node2D
 ## Escena de combate: conecta al jugador con el HUD, el generador
 ## de enemigos y la pantalla de Game Over.
 
-@onready var hud: CanvasLayer = $HUD
-@onready var game_over_screen: CanvasLayer = $GameOverScreen
+@onready var hud = $HUD
+@onready var game_over_screen = $GameOverScreen
+@onready var spawner = $EnemySpawner
 
 var player: MainCharacter = null
 
 
 func _ready() -> void:
+	spawner.wave_changed.connect(hud.update_wave)
+	spawner.kills_changed.connect(hud.update_kills)
+
 	player = _find_player()
 	if player == null:
 		push_warning("Arena: no se encontro al MainCharacter en el grupo 'Player'.")
