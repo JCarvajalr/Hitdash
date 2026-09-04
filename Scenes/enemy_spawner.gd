@@ -3,7 +3,8 @@ extends Node2D
 ## una distancia minima respecto al jugador.
 ##
 ## La dificultad avanza por oleadas: se empieza solo con orcos y, segun
-## sube el numero de bajas, entran los vampiros (enemigos a distancia) y
+## sube el numero de bajas, entran los slimes de lava (cuerpo a cuerpo que
+## se enfurecen al ser golpeados), los vampiros (enemigos a distancia) y
 ## los enemigos salen mas reforzados. Pasada la ultima oleada el juego
 ## sigue en modo infinito, subiendo un escalon cada `kills_to_advance`.
 
@@ -15,6 +16,8 @@ signal kills_changed(kills: int)
 @export var vampire_1_scene: PackedScene = preload("res://Entities/Enemies/vampire_1.tscn")
 @export var vampire_2_scene: PackedScene = preload("res://Entities/Enemies/vampire_2.tscn")
 @export var vampire_3_scene: PackedScene = preload("res://Entities/Enemies/vampire_3.tscn")
+## Slime de lava: cuerpo a cuerpo que se enfurece (mas rapido y agresivo) al recibir dano.
+@export var slime_3_scene: PackedScene = preload("res://Entities/Enemies/slime_3.tscn")
 
 @export_group("Generacion")
 ## Rectangulo (en coordenadas globales) donde pueden aparecer.
@@ -68,26 +71,32 @@ func _default_waves() -> Array[WaveConfig]:
 	))
 	list.append(WaveConfig.create(
 		"Oleada 2 - Llegan los vampiros", 8,
-		[orc_scene, vampire_1_scene], [3.0, 1.0],
-		1.9, 7,
-		1.15, 1.05
+		[orc_scene, vampire_1_scene], [1.0, 1.2],
+		2.1, 5,
+		1.05
 	))
 	list.append(WaveConfig.create(
-		"Oleada 3 - Aquelarre", 10,
-		[orc_scene, vampire_1_scene, vampire_2_scene], [2.0, 2.0, 1.0],
-		1.7, 8,
-		1.35, 1.15, 1.05
+		"Oleada 3 - Lava viviente", 9,
+		[orc_scene, slime_3_scene], [1.5, 2.0],
+		1.8, 8,
+		1.2, 1.1
 	))
 	list.append(WaveConfig.create(
-		"Oleada 4 - Nobleza vampirica", 12,
-		[orc_scene, vampire_1_scene, vampire_2_scene, vampire_3_scene], [1.0, 1.0, 2.0, 1.0],
-		1.5, 9,
+		"Oleada 4 - Aquelarre", 10,
+		[orc_scene, vampire_1_scene, vampire_2_scene, slime_3_scene], [2.0, 2.0, 1.0, 1.5],
+		1.6, 9,
+		1.4, 1.2, 1.05
+	))
+	list.append(WaveConfig.create(
+		"Oleada 5 - Nobleza vampirica", 12,
+		[orc_scene, vampire_1_scene, vampire_2_scene, vampire_3_scene, slime_3_scene], [1.0, 1.0, 2.0, 1.0, 1.5],
+		1.5, 10,
 		1.6, 1.3, 1.1
 	))
 	list.append(WaveConfig.create(
-		"Oleada 5 - Pesadilla", 14,
-		[orc_scene, vampire_2_scene, vampire_3_scene], [1.0, 2.0, 2.0],
-		1.25, 11,
+		"Oleada 6 - Pesadilla", 14,
+		[orc_scene, vampire_2_scene, vampire_3_scene, slime_3_scene], [1.0, 2.0, 2.0, 2.0],
+		1.25, 12,
 		2.0, 1.5, 1.15
 	))
 	return list

@@ -65,8 +65,10 @@ func _unhandled_input(event: InputEvent) -> void:
 	if not visible:
 		return
 	if event.is_action_pressed("ui_accept"):
-		_on_restart_pressed()
+		# Marcar el input como consumido ANTES de recargar la escena:
+		# _on_restart_pressed() libera este nodo y get_viewport() pasa a ser null.
 		get_viewport().set_input_as_handled()
+		_on_restart_pressed()
 
 
 func _on_restart_pressed() -> void:
