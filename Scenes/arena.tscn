@@ -22,13 +22,11 @@ scale = Vector2(2.8, 2.8)
 
 [node name="EnemySpawner" type="Node2D" parent="."]
 script = ExtResource("5_spawner")
-enemy_scene = ExtResource("3_orc")
-spawn_interval = 2.0
-max_alive = 8
-total_to_spawn = -1
+orc_scene = ExtResource("3_orc")
 spawn_area = Rect2(64, 64, 1024, 520)
 min_distance_to_player = 220.0
 enemy_scale = Vector2(2.8, 2.8)
+total_to_spawn = -1
 
 [node name="SpawnTimer" type="Timer" parent="EnemySpawner"]
 wait_time = 2.0

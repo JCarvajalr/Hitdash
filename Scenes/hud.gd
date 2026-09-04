@@ -1,10 +1,15 @@
 extends CanvasLayer
-## HUD del jugador: barra de vida + contador de enemigos.
+## HUD del jugador: barra de vida, oleada actual, bajas y enemigos vivos.
 ## Construye su interfaz por codigo para no depender de nodos de escena.
 
 var _health_bar: ProgressBar
 var _health_label: Label
+var _wave_label: Label
+var _kills_label: Label
 var _enemies_label: Label
+var _banner: Label
+
+var _kills: int = 0
 
 
 func _ready() -> void:
@@ -24,10 +29,13 @@ func _build_ui() -> void:
 
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", 16)
+	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	margin.add_child(row)
 
+	# --- Bloque izquierdo: vida ---
 	var vida_box := VBoxContainer.new()
 	vida_box.custom_minimum_size = Vector2(260, 0)
+	vida_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	row.add_child(vida_box)
 
 	var titulo := Label.new()
@@ -57,11 +65,53 @@ func _build_ui() -> void:
 	_health_label.add_theme_font_size_override("font_size", 13)
 	vida_box.add_child(_health_label)
 
+	# --- Separador elastico ---
+	var spacer := Control.new()
+	spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	spacer.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	row.add_child(spacer)
+
+	# --- Bloque derecho: oleada, bajas y enemigos vivos ---
+	var wave_box := VBoxContainer.new()
+	wave_box.alignment = BoxContainer.ALIGNMENT_BEGIN
+	wave_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	row.add_child(wave_box)
+
+	_wave_label = Label.new()
+	_wave_label.text = "Oleada 1"
+	_wave_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	_wave_label.add_theme_font_size_override("font_size", 18)
+	_wave_label.add_theme_color_override("font_color", Color(0.95, 0.8, 0.35))
+	wave_box.add_child(_wave_label)
+
+	_kills_label = Label.new()
+	_kills_label.text = "Bajas: 0"
+	_kills_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	_kills_label.add_theme_font_size_override("font_size", 14)
+	wave_box.add_child(_kills_label)
+
 	_enemies_label = Label.new()
 	_enemies_label.text = "Enemigos: 0"
+	_enemies_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	_enemies_label.add_theme_font_size_override("font_size", 14)
-	row.add_child(_enemies_label)
+	wave_box.add_child(_enemies_label)
 
+	# --- Cartel central de cambio de oleada ---
+	var banner_holder := CenterContainer.new()
+	banner_holder.set_anchors_preset(Control.PRESET_FULL_RECT)
+	banner_holder.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(banner_holder)
+
+	_banner = Label.new()
+	_banner.add_theme_font_size_override("font_size", 44)
+	_banner.add_theme_color_override("font_color", Color(0.95, 0.8, 0.35))
+	_banner.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_banner.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_banner.modulate.a = 0.0
+	banner_holder.add_child(_banner)
+
+
+# --- Vida ---------------------------------------------------------------
 
 func setup(max_health: float) -> void:
 	if _health_bar == null:
@@ -79,7 +129,7 @@ func update_health(current: float, maximum: float) -> void:
 	_refresh_health_text()
 
 	# Cambia el color de la barra segun el porcentaje de vida.
-	var ratio := 0.0 if maximum <= 0.0 else current / maximum
+	var ratio: float = 0.0 if maximum <= 0.0 else current / maximum
 	var fill := _health_bar.get_theme_stylebox("fill") as StyleBoxFlat
 	if fill != null:
 		if ratio > 0.5:
@@ -92,6 +142,34 @@ func update_health(current: float, maximum: float) -> void:
 
 func _refresh_health_text() -> void:
 	_health_label.text = "%d / %d" % [roundi(_health_bar.value), roundi(_health_bar.max_value)]
+
+
+# --- Oleadas ------------------------------------------------------------
+
+func update_wave(_index: int, display_name: String, endless_level: int) -> void:
+	if _wave_label == null:
+		return
+	_wave_label.text = display_name
+	# La primera oleada no merece cartel: solo se anuncian los ascensos.
+	if _index > 0 or endless_level > 0:
+		_show_banner(display_name)
+
+
+func update_kills(kills: int) -> void:
+	_kills = kills
+	if _kills_label != null:
+		_kills_label.text = "Bajas: %d" % kills
+
+
+func _show_banner(text: String) -> void:
+	if _banner == null:
+		return
+	_banner.text = text
+	_banner.modulate.a = 0.0
+	var tween := create_tween()
+	tween.tween_property(_banner, "modulate:a", 1.0, 0.35)
+	tween.tween_interval(1.3)
+	tween.tween_property(_banner, "modulate:a", 0.0, 0.6)
 
 
 func _process(_delta: float) -> void:

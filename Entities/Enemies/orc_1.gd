@@ -106,6 +106,9 @@ func _die() -> void:
 	if is_dead:
 		return
 	is_dead = true
+	# Fuera del grupo ya, para que el cadaver no cuente como enemigo vivo
+	# mientras dura la animacion de muerte.
+	remove_from_group("Enemy")
 	died.emit()
 	set_physics_process(false)
 	velocity = Vector2.ZERO
