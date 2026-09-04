@@ -8,10 +8,10 @@ signal died
 @export var dash_speed: float = 600.0
 @export var dash_duration: float = 0.15
 @export var dash_cooldown: float = 0.5
+@export var dash_invulnerable_time: float = 0.2
 @export var attack_damage: float = 35
 @export var max_health: float = 100.0
-## Segundos de invulnerabilidad tras recibir un golpe.
-@export var invulnerable_time: float = 0.6
+@export var damage_number_scene: PackedScene
 
 @onready var character_sprite: AnimatedSprite2D = $CharacterSprite
 @onready var attack_hitbox: CollisionShape2D = $AttackArea/CollisionShape2D
@@ -32,6 +32,7 @@ func _ready() -> void:
 	attack_hitbox.disabled = true
 	health = max_health
 	health_changed.emit(health, max_health)
+	character_sprite.frame_changed.connect(_on_frame_changed)
 
 func _physics_process(delta):
 	if is_dead:
@@ -64,23 +65,42 @@ func _physics_process(delta):
 
 func start_attack():
 	is_attacking = true
-	attack_hitbox.disabled = false
+	#attack_hitbox.disabled = false
 	character_sprite.play("attack_" + last_direction_label)
 	await (character_sprite.animation_finished)
-	attack_hitbox.disabled = true
+	#attack_hitbox.disabled = true
 	is_attacking = false
 
 func start_dash():
 	is_dashing = true
 	can_dash = false
+	is_invulnerable = true
+
+	# Desactivar colisiones con enemigos para poder atravesarlos
+	var prev_mask := collision_mask
+	collision_mask = 0
+
+	# Feedback visual de invulnerabilidad/transparencia
+	character_sprite.modulate.a = 0.6
 	dash_effect.play("smoke")
+
 	# Dash hacia la última dirección
 	velocity = last_direction * dash_speed
 
 	# Duración del dash
 	await get_tree().create_timer(dash_duration).timeout
 
+	# Restaurar colisión física tras el desplazamiento
+	collision_mask = prev_mask
 	is_dashing = false
+
+	# Mantener invulnerabilidad si el tiempo configurado supera la duración del dash
+	if dash_invulnerable_time > dash_duration:
+		await get_tree().create_timer(dash_invulnerable_time - dash_duration).timeout
+
+	if not is_dead:
+		character_sprite.modulate = Color.WHITE
+	is_invulnerable = false
 
 	# Cooldown
 	await get_tree().create_timer(dash_cooldown).timeout
@@ -123,17 +143,22 @@ func hurt(damage: float) -> void:
 		return
 	health = max(health - damage, 0.0)
 	health_changed.emit(health, max_health)
+	_spawn_damage_number(damage)
 	if health <= 0.0:
 		die()
 		return
 	_flash_damage()
-	#is_invulnerable = true
-	#await get_tree().create_timer(invulnerable_time).timeout
-	#is_invulnerable = false
+
+func _spawn_damage_number(amount: float) -> void:
+	var damage_number = damage_number_scene.instantiate()
+
+	get_parent().add_child(damage_number)
+	damage_number.global_position = global_position + Vector2(0, -30)
+	damage_number.show_damage(amount)
 
 func _flash_damage() -> void:
 	var tween := create_tween()
-	tween.tween_property(character_sprite, "modulate", Color(1, 0.35, 0.35), 0.2)
+	tween.tween_property(character_sprite, "modulate", Color(0.971, 0.0, 0.183, 1.0), 0.2)
 	tween.tween_property(character_sprite, "modulate", Color.WHITE, 0.22)
 
 func die() -> void:
@@ -150,3 +175,9 @@ func die() -> void:
 	await character_sprite.animation_finished
 	died.emit()
 	
+func _on_frame_changed():
+	if (!is_attacking): return
+	if (character_sprite.frame == 3):
+		attack_hitbox.disabled = false
+	if (character_sprite.frame == 5):
+		attack_hitbox.disabled = true

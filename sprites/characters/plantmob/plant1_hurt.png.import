@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dyr54ngqnudei"
-path="res://.godot/imported/test-01-01.png-13cde9515731fdc5284360df1ace291c.ctex"
+uid="uid://dp2gnqbh48hwe"
+path="res://.godot/imported/plant1_hurt.png-ea3f661a63ae1a6556bc94bfd9981a7b.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://sprites/test-01-01.png"
-dest_files=["res://.godot/imported/test-01-01.png-13cde9515731fdc5284360df1ace291c.ctex"]
+source_file="res://sprites/characters/plantmob/plant1_hurt.png"
+dest_files=["res://.godot/imported/plant1_hurt.png-ea3f661a63ae1a6556bc94bfd9981a7b.ctex"]
 
 [params]
 
