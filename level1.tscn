@@ -5,8 +5,10 @@
 [ext_resource type="PackedScene" uid="uid://plkdpqq5o7qp" path="res://Entities/Enemies/orc_1.tscn" id="4_v38iq"]
 
 [node name="Node2D" type="Node2D" unique_id=1321996837]
+y_sort_enabled = true
 
 [node name="FloorBricks" type="Sprite2D" parent="." unique_id=1088566374]
+z_index = -2
 position = Vector2(586, 320)
 scale = Vector2(0.36577296, 0.47778586)
 texture = ExtResource("1_dopym")

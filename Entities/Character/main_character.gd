@@ -8,6 +8,8 @@ signal died
 @export var dash_speed: float = 600.0
 @export var dash_duration: float = 0.15
 @export var dash_cooldown: float = 0.5
+## Tiempo de invulnerabilidad durante el dash.
+@export var dash_invulnerable_time: float = 0.2
 @export var attack_damage: float = 35
 @export var max_health: float = 100.0
 ## Segundos de invulnerabilidad tras recibir un golpe.
@@ -73,14 +75,33 @@ func start_attack():
 func start_dash():
 	is_dashing = true
 	can_dash = false
+	is_invulnerable = true
+
+	# Desactivar colisiones con enemigos para poder atravesarlos
+	var prev_mask := collision_mask
+	collision_mask = 0
+
+	# Feedback visual de invulnerabilidad/transparencia
+	character_sprite.modulate.a = 0.6
 	dash_effect.play("smoke")
+
 	# Dash hacia la última dirección
 	velocity = last_direction * dash_speed
 
 	# Duración del dash
 	await get_tree().create_timer(dash_duration).timeout
 
+	# Restaurar colisión física tras el desplazamiento
+	collision_mask = prev_mask
 	is_dashing = false
+
+	# Mantener invulnerabilidad si el tiempo configurado supera la duración del dash
+	if dash_invulnerable_time > dash_duration:
+		await get_tree().create_timer(dash_invulnerable_time - dash_duration).timeout
+
+	if not is_dead:
+		character_sprite.modulate = Color.WHITE
+	is_invulnerable = false
 
 	# Cooldown
 	await get_tree().create_timer(dash_cooldown).timeout
@@ -123,17 +144,40 @@ func hurt(damage: float) -> void:
 		return
 	health = max(health - damage, 0.0)
 	health_changed.emit(health, max_health)
+	_spawn_damage_number(damage)
 	if health <= 0.0:
 		die()
 		return
 	_flash_damage()
-	#is_invulnerable = true
-	#await get_tree().create_timer(invulnerable_time).timeout
-	#is_invulnerable = false
+
+func _spawn_damage_number(amount: float) -> void:
+	var label := Label.new()
+	label.text = "-%d" % roundi(amount)
+	label.add_theme_font_size_override("font_size", 18)
+	label.add_theme_color_override("font_color", Color(0.95, 0.15, 0.15))
+	label.add_theme_color_override("font_outline_color", Color(0.0, 0.0, 0.0, 0.9))
+	label.add_theme_constant_override("outline_size", 4)
+	label.z_index = 100
+
+	var parent_node := get_parent()
+	if parent_node == null:
+		parent_node = self
+
+	parent_node.add_child(label)
+
+	var side := 1.0 if randf() > 0.5 else -1.0
+	var offset := Vector2(randf_range(12.0, 24.0) * side, randf_range(-35.0, -25.0))
+	label.global_position = global_position + offset
+
+	var tween := label.create_tween()
+	tween.set_parallel(true)
+	tween.tween_property(label, "global_position:y", label.global_position.y - 30.0, 0.6).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tween.tween_property(label, "modulate:a", 0.0, 0.6).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	tween.chain().tween_callback(label.queue_free)
 
 func _flash_damage() -> void:
 	var tween := create_tween()
-	tween.tween_property(character_sprite, "modulate", Color(1, 0.35, 0.35), 0.2)
+	tween.tween_property(character_sprite, "modulate", Color(0.971, 0.0, 0.183, 1.0), 0.2)
 	tween.tween_property(character_sprite, "modulate", Color.WHITE, 0.22)
 
 func die() -> void:

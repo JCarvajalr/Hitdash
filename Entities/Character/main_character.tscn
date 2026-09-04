@@ -795,9 +795,7 @@ animation = &"smoke"
 
 [node name="CharacterSprite" type="AnimatedSprite2D" parent="." unique_id=1248504392]
 sprite_frames = SubResource("SpriteFrames_u5bk5")
-animation = &"death_up"
-frame = 6
-frame_progress = 1.0
+animation = &"idle_down"
 
 [node name="AttackArea" type="Area2D" parent="." unique_id=1001741421]
 visible = false

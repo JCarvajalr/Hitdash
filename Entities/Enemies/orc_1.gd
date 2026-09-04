@@ -9,7 +9,7 @@ signal died
 @export var stop_distance: float
 @onready var character_sprite: AnimatedSprite2D = $CharacterSprite
 @onready var restart_attack_timer: Timer = $RestartAttackTimer
-@onready var attack_hitbox: CollisionShape2D = $AttackArea/AttackHitbox
+@onready var attack_hitbox: CollisionPolygon2D = $AttackArea/AttackHitbox
 @onready var attack_area: Area2D = $AttackArea
 var player
 var is_attacking: bool = false
@@ -54,17 +54,23 @@ func _build_health_bar() -> void:
 	add_child(_health_bar)
 
 func _physics_process(delta: float) -> void:
+	var temp
 	if is_dead:
 		return
 	var direction = Vector2.ZERO
 	if (player != null):
-		if (global_position.distance_to(player.global_position) > stop_distance):
+		temp = global_position.distance_to(player.global_position)
+		if (temp > stop_distance):
 			direction = (player.global_position - global_position).normalized()
 		else:
-			direction = Vector2.ZERO
-			start_attack()
-		
-	move(direction)
+			if (last_direction_label == "down" and stop_distance - temp <= 20):
+				direction = (player.global_position - global_position).normalized()
+			else:
+				direction = Vector2.ZERO
+				start_attack()
+	
+	if (!is_attacking):
+		move(direction)
 	move_and_slide()
 
 func move(direction):
@@ -76,6 +82,7 @@ func move(direction):
 
 func start_attack():
 	if (!can_attack || is_dead): return
+	velocity = Vector2.ZERO
 	is_attacking = true
 	can_attack = false
 	character_sprite.play("attack_" + last_direction_label)
@@ -114,9 +121,9 @@ func _die() -> void:
 	attack_hitbox.set_deferred("disabled", true)
 	if _health_bar != null:
 		_health_bar.visible = false
-	character_sprite.play("hurt_" + last_direction_label)
+	character_sprite.play("death_" + last_direction_label)
 	var tween := create_tween()
-	tween.tween_property(self, "modulate:a", 0.0, 0.45)
+	tween.tween_property(self, "modulate:a", 0.0, 0.6)
 	await tween.finished
 	queue_free()
 
@@ -131,18 +138,21 @@ func update_dir():
 	if (abs(last_direction.x) > abs(last_direction.y)):
 		if (last_direction.x > 0):
 			dir.append("right")
-			attack_hitbox.position = Vector2(20, -1)
+			attack_hitbox.position = Vector2(13, 11)
+			attack_hitbox.rotation = deg_to_rad(-28)
 		else:
 			dir.append("left")
-			attack_hitbox.position = Vector2(-20, -1)
+			attack_hitbox.position = Vector2(-24, 0)
+			attack_hitbox.rotation = deg_to_rad(73)
 	elif (abs(last_direction.y) > abs(last_direction.x)):
 		if (last_direction.y > 0):
 			dir.append("down")
-			attack_hitbox.position = Vector2(9, 8)
+			attack_hitbox.position = Vector2(2, 13)
+			attack_hitbox.rotation = deg_to_rad(0)
 		else:
 			dir.append("up")
-			attack_hitbox.position = Vector2(0, -16)
-			
+			attack_hitbox.position = Vector2(4, -20)
+			attack_hitbox.rotation = deg_to_rad(180)
 	last_direction_label = dir[0]
 
 func update_animation(direction):
