@@ -5,20 +5,26 @@ signal died
 @export var health: float
 @export var max_health: float = 100.0
 @export var attack_damage: float
-@export var speed: float = 120.0
-@export var stop_distance: float = 80.0
-## Distancia a la que el slime deja de acercarse y se detiene (modo normal).
-@export var comfort_distance: float = 120.0
-## Segundos que el slime se mueve hacia el jugador antes de detenerse (modo normal).
-@export var approach_time: float = 1.2
-## Segundos que el slime se queda quieto antes de volver a moverse (modo normal).
-@export var rest_time: float = 1.5
+
+## --- Comportamiento Pasivo / Paseo ---
+## Velocidad del slime cuando pasea tranquilamente.
+@export var speed: float = 70.0
+## Distancia para atacar al jugador si se encuentra muy cerca.
+@export var stop_distance: float = 65.0
+## Tiempo mínimo que el slime camina en una dirección al pasear.
+@export var wander_time_min: float = 1.0
+## Tiempo máximo que el slime camina en una dirección al pasear.
+@export var wander_time_max: float = 2.5
+## Tiempo mínimo que el slime permanece quieto descansando.
+@export var idle_time_min: float = 1.5
+## Tiempo máximo que el slime permanece quieto descansando.
+@export var idle_time_max: float = 3.5
 
 ## Cooldown normal entre ataques en segundos.
 @export var normal_attack_cooldown: float = 2.0
 
 ## --- Modo Furia (Enrage) ---
-## Velocidad del slime cuando se enfurece tras recibir daño.
+## Velocidad del slime cuando se enfurece tras recibir daño y persigue al jugador.
 @export var enraged_speed: float = 220.0
 ## Duración en segundos del estado de furia tras ser golpeado.
 @export var enrage_duration: float = 6.0
@@ -45,10 +51,12 @@ var _enrage_timer: float = 0.0
 
 var _health_bar: ProgressBar
 
-## Estado de movimiento del slime: alterna entre acercarse y descansar.
-enum MoveState { APPROACHING, RESTING }
-var _move_state: MoveState = MoveState.APPROACHING
+## Estados del comportamiento pasivo: pasear o quedarse quieto
+enum PassiveState { WANDERING, IDLE }
+var _passive_state: PassiveState = PassiveState.IDLE
 var _state_timer: float = 0.0
+var _current_state_duration: float = 1.0
+var _wander_direction := Vector2.ZERO
 
 func _ready() -> void:
 	add_to_group("Enemy")
@@ -61,8 +69,25 @@ func _ready() -> void:
 	max_health = max(max_health, health)
 	_build_health_bar()
 
-	# Empezar en un estado aleatorio para que no todos se muevan a la vez.
-	_state_timer = randf_range(0.0, approach_time)
+	# Iniciar paseando en una dirección aleatoria con tiempo desfasado
+	_set_passive_state(PassiveState.WANDERING)
+	_state_timer = randf_range(0.0, _current_state_duration * 0.8)
+
+func _set_passive_state(new_state: PassiveState) -> void:
+	_passive_state = new_state
+	_state_timer = 0.0
+	if new_state == PassiveState.WANDERING:
+		_current_state_duration = randf_range(wander_time_min, wander_time_max)
+		# Elegir una dirección aleatoria en 2D
+		var angle := randf_range(0.0, TAU)
+		_wander_direction = Vector2.RIGHT.rotated(angle).normalized()
+	else:
+		_current_state_duration = randf_range(idle_time_min, idle_time_max)
+		_wander_direction = Vector2.ZERO
+		# Cada vez que se queda quieto, ataca al aire en la dirección hacia la que mira
+		if !is_dead and !is_attacking:
+			can_attack = true
+			start_attack()
 
 func _build_health_bar() -> void:
 	_health_bar = ProgressBar.new()
@@ -101,43 +126,33 @@ func _physics_process(delta: float) -> void:
 			is_enraged = false
 			if not is_dead:
 				character_sprite.modulate = Color.WHITE
+			_set_passive_state(PassiveState.IDLE)
 
 	var dist_to_player := global_position.distance_to(player.global_position)
 	var dir_to_player = (player.global_position - global_position).normalized()
 
-	# Actualizar la dirección visual hacia el jugador siempre.
-	if dir_to_player != Vector2.ZERO:
+	# Si el jugador se acerca mientras el slime se mueve o en cualquier momento, atacar hacia el jugador
+	if dist_to_player <= stop_distance and !is_attacking and can_attack:
 		last_direction = dir_to_player
-
-	# Si está lo suficientemente cerca, atacar.
-	if dist_to_player <= stop_distance and !is_attacking:
+		update_dir()
 		start_attack()
 
 	var direction := Vector2.ZERO
 
 	if !is_attacking:
 		if is_enraged:
-			# En modo furia: persigue directamente al jugador sin pausas ni descansos
+			# En modo furia: persigue directamente al jugador
 			direction = dir_to_player
 		else:
-			# Movimiento tipo "lunge": se acerca por periodos y luego descansa.
+			# Modo pasivo: alterna entre pasear en una dirección y descansar
 			_state_timer += delta
-			match _move_state:
-				MoveState.APPROACHING:
-					# Solo moverse si está más lejos que la distancia cómoda.
-					if dist_to_player > comfort_distance:
-						direction = dir_to_player
-					else:
-						# Ya está cerca, descansar.
-						direction = Vector2.ZERO
-					if _state_timer >= approach_time:
-						_state_timer = 0.0
-						_move_state = MoveState.RESTING
-				MoveState.RESTING:
-					direction = Vector2.ZERO
-					if _state_timer >= rest_time:
-						_state_timer = 0.0
-						_move_state = MoveState.APPROACHING
+			if _state_timer >= _current_state_duration:
+				if _passive_state == PassiveState.WANDERING:
+					_set_passive_state(PassiveState.IDLE)
+				else:
+					_set_passive_state(PassiveState.WANDERING)
+
+			direction = _wander_direction if _passive_state == PassiveState.WANDERING else Vector2.ZERO
 
 		move(direction)
 	else:
@@ -154,7 +169,7 @@ func move(direction: Vector2) -> void:
 	update_animation(direction, current_speed)
 
 func start_attack():
-	if !can_attack or is_dead:
+	if !can_attack or is_dead or is_attacking:
 		return
 	velocity = Vector2.ZERO
 	is_attacking = true
@@ -175,7 +190,7 @@ func hurt(damage: float) -> void:
 		_die()
 		return
 
-	# Activar o reiniciar estado de furia
+	# Activar o reiniciar estado de furia al recibir daño
 	is_enraged = true
 	_enrage_timer = enrage_duration
 

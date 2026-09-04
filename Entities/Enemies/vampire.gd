@@ -208,9 +208,9 @@ func _build_health_bar() -> void:
 	_health_bar.min_value = 0.0
 	_health_bar.max_value = max_health
 	_health_bar.value = health
-	_health_bar.custom_minimum_size = Vector2(34, 5)
-	_health_bar.size = Vector2(34, 5)
-	_health_bar.position = Vector2(-17, -34)
+	_health_bar.custom_minimum_size = Vector2(24, 4)
+	_health_bar.size = Vector2(24, 4)
+	_health_bar.position = Vector2(-12, -34)
 	_health_bar.z_index = 100
 	_health_bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
 

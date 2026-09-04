@@ -1,0 +1,47 @@
+[gd_scene format=3 uid="uid://cqger85tq0i4t"]
+
+[ext_resource type="Texture2D" uid="uid://b0nol7hexyave" path="res://sprites/background/castle_window.png" id="1_teg6y"]
+[ext_resource type="Texture2D" uid="uid://32syf52oq7fa" path="res://sprites/background/floor_bricks_castle.png" id="2_mowjm"]
+[ext_resource type="Texture2D" uid="uid://c7ekgdmooeyqw" path="res://sprites/background/candles.png" id="3_uyu3e"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_l7l2g"]
+size = Vector2(1342, 20)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_03w4c"]
+size = Vector2(17.5, 685.5)
+
+[node name="Castle" type="Node2D" unique_id=1636965195]
+
+[node name="CastleWindow" type="Sprite2D" parent="." unique_id=253781813]
+position = Vector2(2, -485)
+scale = Vector2(0.34302324, 0.34302324)
+texture = ExtResource("1_teg6y")
+
+[node name="FloorBricksCastle" type="Sprite2D" parent="." unique_id=1725712738]
+position = Vector2(0, 6)
+scale = Vector2(0.34244794, 0.5410903)
+texture = ExtResource("2_mowjm")
+
+[node name="Candles" type="Sprite2D" parent="." unique_id=1075283470]
+position = Vector2(0, -425.00003)
+scale = Vector2(0.2931678, 0.29316777)
+texture = ExtResource("3_uyu3e")
+
+[node name="Boundaries" type="StaticBody2D" parent="." unique_id=2034277212]
+visible = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Boundaries" unique_id=215358121]
+position = Vector2(2, -339)
+shape = SubResource("RectangleShape2D_l7l2g")
+
+[node name="CollisionShape2D4" type="CollisionShape2D" parent="Boundaries" unique_id=1222111546]
+position = Vector2(2, 345)
+shape = SubResource("RectangleShape2D_l7l2g")
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="Boundaries" unique_id=1049870319]
+position = Vector2(663, 2)
+shape = SubResource("RectangleShape2D_03w4c")
+
+[node name="CollisionShape2D3" type="CollisionShape2D" parent="Boundaries" unique_id=1251233548]
+position = Vector2(-665, 2)
+shape = SubResource("RectangleShape2D_03w4c")

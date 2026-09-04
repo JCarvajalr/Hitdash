@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://d3kncx2mdi7fg"]
 
-[ext_resource type="Script" uid="uid://da8f5qkgt3u4b" path="res://Entities/Enemies/slime_3.gd" id="1_c1040"]
+[ext_resource type="Script" uid="uid://da8f5qkgt3u4b" path="res://Entities/Enemies/slimes/slime_3.gd" id="1_c1040"]
 [ext_resource type="Texture2D" uid="uid://21c0odjhuy45" path="res://sprites/characters/slimes/slime3_attack.png" id="1_sisqj"]
 [ext_resource type="Texture2D" uid="uid://pdv4ly8qju37" path="res://sprites/characters/slimes/slime3_death.png" id="2_c1040"]
 [ext_resource type="Texture2D" uid="uid://cuu5aqjjak3mq" path="res://sprites/characters/slimes/slime3_idle.png" id="3_i2c40"]
@@ -1266,11 +1266,12 @@ size = Vector2(24.523237, 24.630867)
 
 [node name="Slime3" type="CharacterBody2D" unique_id=373794746]
 collision_layer = 9
-collision_mask = 10
+collision_mask = 2
 script = ExtResource("1_c1040")
 health = 100.0
 attack_damage = 25.0
 enraged_speed = 340.0
+enrage_duration = 5.0
 enraged_attack_cooldown = 0.4
 enraged_attack_anim_speed = 1.6
 

@@ -76,9 +76,9 @@ func start_dash():
 	can_dash = false
 	is_invulnerable = true
 
-	# Desactivar colisiones con enemigos para poder atravesarlos
+	# Desactivar colisiones con enemigos para poder atravesarlos, pero respetando los bordes de pantalla
 	var prev_mask := collision_mask
-	collision_mask = 0
+	collision_mask = 2
 
 	# Feedback visual de invulnerabilidad/transparencia
 	character_sprite.modulate.a = 0.6
