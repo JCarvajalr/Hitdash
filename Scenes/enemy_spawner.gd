@@ -357,6 +357,13 @@ func room_has_boss() -> bool:
 	return _room_boss != null
 
 
+## Si la sala a la que lleva el portal sera de jefe.
+func next_room_has_boss() -> bool:
+	if _wave_index < waves.size() - 1:
+		return waves[_wave_index + 1].boss_scene != null
+	return (_endless_level + 1) % endless_boss_every == 0
+
+
 # --- Progresion de salas ------------------------------------------------
 
 func _on_enemy_died() -> void:
