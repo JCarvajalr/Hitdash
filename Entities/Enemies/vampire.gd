@@ -75,7 +75,7 @@ func _physics_process(_delta: float) -> void:
 			# Mientras lanza el hechizo se queda quieto y mirando al jugador.
 			direction = Vector2.ZERO
 		elif distance > attack_range:
-			direction = aim              # esta lejos: acercarse
+			direction = Pathing.next_direction(self, player.global_position) # lejos: acercarse
 		elif distance < retreat_distance:
 			direction = -aim             # esta encima: retroceder (kiting)
 		else:
@@ -139,6 +139,7 @@ func _fire_projectile() -> void:
 		(bolt as Node2D).global_position = global_position + _aim * muzzle_offset
 	if bolt is MagicBolt:
 		(bolt as MagicBolt).setup(_aim, projectile_speed, attack_damage)
+	Sfx.play("bolt", 0.12, -6.0)
 
 
 func _on_cooldown_timeout() -> void:

@@ -141,8 +141,8 @@ func _physics_process(delta: float) -> void:
 
 	if !is_attacking:
 		if is_enraged:
-			# En modo furia: persigue directamente al jugador
-			direction = dir_to_player
+			# En modo furia: persigue al jugador rodeando obstaculos
+			direction = Pathing.next_direction(self, player.global_position)
 		else:
 			# Modo pasivo: alterna entre pasear en una dirección y descansar
 			_state_timer += delta
@@ -152,6 +152,9 @@ func _physics_process(delta: float) -> void:
 				else:
 					_set_passive_state(PassiveState.WANDERING)
 
+			# Si se choca con algo mientras pasea, cambia de rumbo.
+			if _passive_state == PassiveState.WANDERING and get_slide_collision_count() > 0:
+				_wander_direction = get_slide_collision(0).get_normal().rotated(randf_range(-0.8, 0.8))
 			direction = _wander_direction if _passive_state == PassiveState.WANDERING else Vector2.ZERO
 
 		move(direction)
@@ -214,6 +217,8 @@ func _die() -> void:
 		return
 	is_dead = true
 	is_enraged = false
+	# Fuera del grupo ya, para que el cadaver no cuente como enemigo vivo.
+	remove_from_group("Enemy")
 	died.emit()
 	set_physics_process(false)
 	velocity = Vector2.ZERO

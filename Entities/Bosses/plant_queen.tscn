@@ -1,0 +1,6 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://Entities/Bosses/plant_queen.gd" id="1_boss"]
+
+[node name="PlantQueen" type="CharacterBody2D"]
+script = ExtResource("1_boss")

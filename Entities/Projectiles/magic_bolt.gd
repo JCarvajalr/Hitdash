@@ -47,6 +47,9 @@ func _on_body_entered(body) -> void:
 	if body.is_in_group("Player") and body.has_method("hurt"):
 		body.hurt(damage)
 		_impact()
+	elif body is StaticBody2D:
+		# Pilares, cajas y muros sirven de cobertura.
+		_impact()
 
 
 func _impact() -> void:

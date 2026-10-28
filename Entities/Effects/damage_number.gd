@@ -2,21 +2,41 @@ extends Label
 
 
 
-func show_damage(amount: int):
-	text = "-" + str(amount)
+func show_damage(amount: int, color: Color = Color.TRANSPARENT, crit: bool = false):
+	if crit:
+		show_text("¡CRIT! -" + str(amount), color, 1.35)
+	else:
+		show_text("-" + str(amount), color)
+
+
+## Muestra un texto flotante con el mismo efecto que los numeros de dano.
+## Si `color` es transparente se mantiene el color de la escena.
+func show_text(message: String, color: Color = Color.TRANSPARENT, size_mult: float = 1.0):
+	text = message
+	z_index = 200
+	if color.a > 0.0 and label_settings != null:
+		label_settings = label_settings.duplicate()
+		label_settings.font_color = color
+
+	# Centrar el texto sobre el punto donde se genera.
+	await get_tree().process_frame
+	if not is_inside_tree():
+		return
+	pivot_offset = size / 2.0
+	position -= size / 2.0
 
 	var original_position := position
 
 	# Aparece un poco más grande
-	scale = Vector2(0.5, 0.5)
-	
+	scale = Vector2(0.5, 0.5) * size_mult
+
 	var appear_tween := create_tween()
 	appear_tween.set_parallel(true)
 
 	appear_tween.tween_property(
 		self,
 		"scale",
-		Vector2(1.2, 1.2),
+		Vector2(1.2, 1.2) * size_mult,
 		0.08
 	)
 

@@ -19,6 +19,11 @@ extends Resource
 @export var health_multiplier: float = 1.0
 @export var damage_multiplier: float = 1.0
 @export var speed_multiplier: float = 1.0
+## Si se asigna, la oleada es un combate contra este jefe: no salen
+## enemigos normales y se avanza al derrotarlo.
+@export var boss_scene: PackedScene
+## Escenario de la arena durante la oleada (ver BIOMES en arena.gd).
+@export var biome: int = 0
 
 
 static func create(

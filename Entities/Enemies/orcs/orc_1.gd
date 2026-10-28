@@ -61,10 +61,10 @@ func _physics_process(delta: float) -> void:
 	if (player != null):
 		temp = global_position.distance_to(player.global_position)
 		if (temp > stop_distance):
-			direction = (player.global_position - global_position).normalized()
+			direction = Pathing.next_direction(self, player.global_position)
 		else:
 			if (last_direction_label == "down" and stop_distance - temp <= 20):
-				direction = (player.global_position - global_position).normalized()
+				direction = Pathing.next_direction(self, player.global_position)
 			else:
 				direction = Vector2.ZERO
 				start_attack()
