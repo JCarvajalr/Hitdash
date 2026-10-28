@@ -17,7 +17,7 @@
 
 ## El juego
 
-Eres un espadachín atrapado en una mazmorra que cambia a cada paso. Cada sala trae una tanda de enemigos; cuando caen todos aparecen un **cofre** y un **portal** hacia la siguiente. Por el camino te esperan dos jefes, armas con poderes propios y reliquias que se acumulan durante la partida.
+Eres un espadachín atrapado en una mazmorra que cambia a cada paso. Cada sala trae una tanda de enemigos; cuando caen todos aparecen un **cofre** y **dos portales**, y tú eliges a cuál entrar según la recompensa que anuncian. Por el camino te esperan dos jefes, armas con poderes propios y reliquias que se acumulan durante la partida.
 
 La mecánica central da nombre al juego: el **Dash Strike**. El dash golpea a todo lo que atraviesas y, si mata a alguien, **se recarga al instante**. Bien encadenado, puedes cruzar una sala entera de enemigo en enemigo.
 
@@ -37,7 +37,8 @@ La mecánica central da nombre al juego: el **Dash Strike**. El dash golpea a to
 - Cada sala tiene una distribución distinta de **columnas** (cubren de los proyectiles) y **cajas, barriles y vasijas** rompibles que a veces sueltan vida.
 - Antes de aparecer, cada enemigo marca el suelo con un círculo rojo.
 - Los enemigos **rodean los obstáculos** con un mapa de navegación que se genera en cada sala.
-- Al despejarla cae un **portal**: un arco de piedra con un vórtice que se acelera cuando te acercas.
+- Al despejarla aparecen **dos portales** para elegir camino: cada uno anuncia con un emblema la recompensa de la sala siguiente (**arma**, **reliquia** o **vida**). Antes de un jefe solo hay uno, rojo y con calavera.
+- Los portales son arcos de piedra con un vórtice que distorsiona el aire y se acelera cuando te acercas. Al entrar, la cámara se acerca y apareces en la sala nueva saliendo de otro portal.
 
 **Jefes**
 | Reina Carnívora | Conde Vampiro |
@@ -64,7 +65,7 @@ Las reliquias se acumulan y se cogen con solo pasar por encima: **Corazón de Dr
 
 <p align="center">
   <img src="docs/screenshots/portal.jpg" alt="Sala despejada con portal y cofre" width="85%">
-  <br><sub>Sala despejada: el portal a la siguiente sala y un cofre con un arma nueva.</sub>
+  <br><sub>Sala despejada: el cofre con la recompensa y dos portales para elegir la siguiente.</sub>
 </p>
 
 **Cuatro escenarios**
