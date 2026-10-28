@@ -189,6 +189,10 @@ func _build_inventory() -> void:
 	_weapon_desc = Label.new()
 	_weapon_desc.add_theme_font_size_override("font_size", 11)
 	_weapon_desc.add_theme_color_override("font_color", Color(0.75, 0.75, 0.8))
+	# Descripciones largas saltan de linea para que el panel no invada la
+	# barra del jefe.
+	_weapon_desc.custom_minimum_size.x = 190
+	_weapon_desc.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	texts.add_child(_weapon_desc)
 
 	_relic_row = HBoxContainer.new()
@@ -293,8 +297,8 @@ func _build_boss_bar() -> void:
 	_boss_panel.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
 	_boss_panel.grow_horizontal = Control.GROW_DIRECTION_BOTH
 	_boss_panel.grow_vertical = Control.GROW_DIRECTION_BEGIN
-	_boss_panel.offset_left = -300
-	_boss_panel.offset_right = 300
+	_boss_panel.offset_left = -250
+	_boss_panel.offset_right = 250
 	_boss_panel.offset_bottom = -28
 	_boss_panel.add_theme_constant_override("separation", 4)
 	_boss_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -310,7 +314,7 @@ func _build_boss_bar() -> void:
 	_boss_panel.add_child(_boss_name)
 
 	var stack := Control.new()
-	stack.custom_minimum_size = Vector2(600, 16)
+	stack.custom_minimum_size = Vector2(500, 16)
 	stack.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_boss_panel.add_child(stack)
 

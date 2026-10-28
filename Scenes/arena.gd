@@ -285,7 +285,12 @@ func _on_room_cleared() -> void:
 	# El primer cofre siempre trae un arma, para que se note el sistema.
 	if _room_count == 1:
 		chest.forced_kind = "weapon"
-	chest.position = RoomBuilder.free_point(Vector2(576, 190), spawner.blocked_rects)
+	# A un lado del portal, para que el arma que suelta no tape su letrero.
+	# Se evita tambien lo alto de las columnas, no solo su base.
+	var tall: Array[Rect2] = []
+	for rect in spawner.blocked_rects:
+		tall.append(Rect2(rect.position.x, rect.position.y - 130, rect.size.x, rect.size.y + 130))
+	chest.position = RoomBuilder.free_point(Vector2(760, 360), tall)
 	add_child(chest)
 
 	var portal := Portal.new()
