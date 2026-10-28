@@ -15,7 +15,7 @@
 
 ---
 
-## 🎮 El juego
+## El juego
 
 Eres un espadachín atrapado en una mazmorra que cambia a cada paso. Cada sala trae una tanda de enemigos; cuando caen todos aparecen un **cofre** y un **portal** hacia la siguiente. Por el camino te esperan dos jefes, armas con poderes propios y reliquias que se acumulan durante la partida.
 
@@ -26,7 +26,7 @@ La mecánica central da nombre al juego: el **Dash Strike**. El dash golpea a to
   <br><sub>Combo x40 en rango S con el Filo del Infierno: críticos, quemadura y escudo de la Égida.</sub>
 </p>
 
-## ✨ Características
+## Características
 
 **Combate con buen game feel**
 - **Hit-stop**, temblor de cámara y empujón en cada golpe; más fuerte con críticos y remates.
@@ -84,7 +84,7 @@ Mazmorra, Invernadero maldito, Castillo carmesí y Abismo. Cada uno tiene su pro
   <img src="docs/screenshots/death.jpg" alt="Efecto de muerte" width="70%">
 </p>
 
-## 🕹️ Controles
+## Controles
 
 | Acción | Tecla |
 |---|---|
@@ -95,7 +95,7 @@ Mazmorra, Invernadero maldito, Castillo carmesí y Abismo. Cada uno tiene su pro
 | Pausa | <kbd>Esc</kbd> |
 | Reiniciar (en Game Over) | <kbd>Enter</kbd> |
 
-## 🚀 Cómo ejecutarlo
+## Cómo ejecutarlo
 
 1. Instala [Godot 4.7](https://godotengine.org/download) (sirve la versión estándar).
 2. Clona el repo:
@@ -107,7 +107,7 @@ Mazmorra, Invernadero maldito, Castillo carmesí y Abismo. Cada uno tiene su pro
 
 > La primera vez Godot importa todos los recursos; puede tardar unos segundos.
 
-## 🗂️ Estructura del proyecto
+## Estructura del proyecto
 
 ```
 Entities/
@@ -133,7 +133,7 @@ tools/           Scripts que generan audio, pixel art y la miniatura
 docs/            Miniatura y capturas del README
 ```
 
-## 🛠️ Cómo ampliarlo
+## Cómo ampliarlo
 
 - **Una sala nueva:** añade una distribución en `Scenes/rooms/room_builder.gd` (lista `LAYOUTS` y su caso en `build()`).
 - **Un arma:** añade una entrada en `Items.WEAPONS` (`Systems/items.gd`). Para un efecto nuevo, implementa su caso en `_apply_weapon_effect()` del jugador y su aura en `Entities/Effects/weapon_look.gd`.
@@ -150,9 +150,11 @@ python tools/gen_props.py      # columnas, cajas, portal, antorchas -> sprites/p
 python tools/gen_thumbnail.py  # miniatura del repo -> docs/thumbnail.png
 ```
 
-## 👥 Equipo
+## Equipo
 
-- [JCarvajalr](https://github.com/JCarvajalr)
-- Santos Enmanuel
+- Juan Carvajal
+- Santos Manosalva
+- Sergio Mesa
+- Stiven Florez
 
 Los sprites de personajes y fondos de `sprites/characters` y `sprites/background` son de terceros: revisa su licencia antes de distribuir el juego.
