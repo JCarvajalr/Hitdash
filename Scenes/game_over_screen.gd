@@ -67,12 +67,24 @@ func _build_ui() -> void:
 	ayuda.add_theme_font_size_override("font_size", 18)
 	box.add_child(ayuda)
 
+	var btn_box := HBoxContainer.new()
+	btn_box.alignment = BoxContainer.ALIGNMENT_CENTER
+	btn_box.add_theme_constant_override("separation", 16)
+	box.add_child(btn_box)
+
 	_restart_button = Button.new()
 	_restart_button.text = "Reiniciar"
-	_restart_button.custom_minimum_size = Vector2(220, 56)
-	_restart_button.add_theme_font_size_override("font_size", 24)
+	_restart_button.custom_minimum_size = Vector2(200, 52)
+	_restart_button.add_theme_font_size_override("font_size", 22)
 	_restart_button.pressed.connect(_on_restart_pressed)
-	box.add_child(_restart_button)
+	btn_box.add_child(_restart_button)
+
+	var menu_btn := Button.new()
+	menu_btn.text = "Menu Principal"
+	menu_btn.custom_minimum_size = Vector2(200, 52)
+	menu_btn.add_theme_font_size_override("font_size", 22)
+	menu_btn.pressed.connect(_on_menu_pressed)
+	btn_box.add_child(menu_btn)
 
 
 func show_screen(wave_name: String = "") -> void:
@@ -138,3 +150,8 @@ func _unhandled_input(event: InputEvent) -> void:
 func _on_restart_pressed() -> void:
 	get_tree().paused = false
 	get_tree().reload_current_scene()
+
+
+func _on_menu_pressed() -> void:
+	get_tree().paused = false
+	get_tree().change_scene_to_file("res://Scenes/main_menu.tscn")
