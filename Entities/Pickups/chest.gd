@@ -3,12 +3,15 @@ extends Node2D
 ## y suelta un arma o una reliquia.
 
 const ItemPickup := preload("res://Entities/Pickups/item_pickup.gd")
+const HealOrb := preload("res://Entities/Pickups/heal_orb.gd")
 
 ## Probabilidad de que el cofre traiga un arma en vez de una reliquia.
 @export var weapon_chance: float = 0.35
-## Fuerza el contenido ("" = al azar).
+## Fuerza el contenido: "weapon", "relic", "heal" (orbes de vida) o "" (al azar).
 @export var forced_kind: String = ""
 @export var open_radius: float = 40.0
+## Orbes que suelta un cofre de vida.
+@export var heal_orbs: int = 5
 @export var lifetime: float = 30.0
 
 var _player: Node2D
@@ -54,6 +57,17 @@ func open() -> void:
 	Combat.shake(4.0)
 	var tween := create_tween()
 	tween.tween_property(self, "_lid", 1.0, 0.25).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+
+	if forced_kind == "heal":
+		# Recompensa de vida: un punado de orbes que saltan del cofre.
+		for i in heal_orbs:
+			var orb := HealOrb.new()
+			orb.position = position + Vector2(randf_range(-30, 30), -20)
+			get_parent().call_deferred("add_child", orb)
+		tween.tween_interval(1.5)
+		tween.tween_property(self, "modulate:a", 0.0, 0.6)
+		tween.tween_callback(queue_free)
+		return
 
 	var pickup := ItemPickup.new()
 	var as_weapon := forced_kind == "weapon" or (forced_kind == "" and randf() < weapon_chance)

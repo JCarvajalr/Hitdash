@@ -86,6 +86,12 @@ var _transitioning: bool = false
 var _fade: ColorRect
 var _player_scale := Vector2.ONE
 var _nav_region: NavigationRegion2D
+## Recompensa del cofre de la sala actual (la eligio el jugador con el portal).
+var _room_reward: String = "weapon"
+## Recompensas que pueden ofrecer los portales (las salas de jefe aparte).
+const PORTAL_REWARDS := ["weapon", "relic", "relic", "heal"]
+## Medio ancho y alto (sobre su base) que ocupa un portal con su emblema.
+const PORTAL_SIZE := Vector2(80, 230)
 
 
 func _ready() -> void:
@@ -281,21 +287,70 @@ func _on_room_cleared() -> void:
 	hud.show_message("¡SALA DESPEJADA!")
 	Sfx.play("rank_up", 0.0)
 
-	var chest := Chest.new()
-	# El primer cofre siempre trae un arma, para que se note el sistema.
-	if _room_count == 1:
-		chest.forced_kind = "weapon"
-	# A un lado del portal, para que el arma que suelta no tape su letrero.
-	# Se evita tambien lo alto de las columnas, no solo su base.
-	var tall: Array[Rect2] = []
+	# Lo que ocupa en pantalla cada obstaculo (las columnas son altas), y
+	# lo que se va colocando, para que nada se monte encima de nada.
+	var taken: Array[Rect2] = []
 	for rect in spawner.blocked_rects:
-		tall.append(Rect2(rect.position.x, rect.position.y - 130, rect.size.x, rect.size.y + 130))
-	chest.position = RoomBuilder.free_point(Vector2(760, 360), tall)
+		taken.append(Rect2(rect.position.x, rect.position.y - 130, rect.size.x, rect.size.y + 130))
+
+	# Cofre con la recompensa que se eligio al entrar (el primero, un arma).
+	var chest := Chest.new()
+	chest.forced_kind = _room_reward
+	chest.position = _find_spot(Vector2(576, 250), Vector2(30, 80), taken)
 	add_child(chest)
 
+	# Si toca jefe, un unico portal rojo. Si no, dos portales para elegir
+	# la recompensa de la sala siguiente.
+	if spawner.next_room_has_boss():
+		_add_portal("boss", _find_spot(Vector2(576, 470), PORTAL_SIZE, taken))
+	else:
+		var options: Array = PORTAL_REWARDS.duplicate()
+		options.shuffle()
+		var first: String = options[0]
+		var second: String = first
+		for option in options:
+			if option != first:
+				second = option
+				break
+		_add_portal(first, _find_spot(Vector2(400, 440), PORTAL_SIZE, taken))
+		_add_portal(second, _find_spot(Vector2(752, 440), PORTAL_SIZE, taken))
+
+
+## Busca, cerca de `preferred`, un sitio donde quepa algo de `half_size`
+## (medio ancho y alto sobre su base) sin pisar nada de `taken` ni salirse
+## de la sala. Lo que coloca lo anade a `taken`.
+func _find_spot(preferred: Vector2, half_size: Vector2, taken: Array[Rect2]) -> Vector2:
+	var area := RoomBuilder.PLAY_AREA
+	var best := preferred
+	for ring in range(0, 10):
+		var tries := 1 if ring == 0 else 12
+		var found := false
+		for i in tries:
+			var p := preferred + Vector2.RIGHT.rotated(TAU * i / tries) * ring * 35.0
+			var rect := Rect2(p.x - half_size.x, p.y - half_size.y, half_size.x * 2.0, half_size.y + 20.0)
+			if rect.position.x < area.position.x or rect.end.x > area.end.x:
+				continue
+			if rect.position.y < 70.0 or rect.end.y > area.end.y + 20.0:
+				continue
+			var clear := true
+			for other in taken:
+				if rect.intersects(other.grow(6.0)):
+					clear = false
+					break
+			if clear:
+				best = p
+				found = true
+				break
+		if found:
+			break
+	taken.append(Rect2(best.x - half_size.x, best.y - half_size.y, half_size.x * 2.0, half_size.y + 20.0))
+	return best
+
+
+func _add_portal(reward: String, pos: Vector2) -> void:
 	var portal := Portal.new()
-	portal.color = BIOMES[maxi(_biome, 0)]["accent"]
-	portal.position = RoomBuilder.free_point(Vector2(576, 360), spawner.blocked_rects)
+	portal.reward = reward
+	portal.position = pos
 	portal.entered.connect(_enter_portal.bind(portal))
 	add_child(portal)
 
@@ -308,12 +363,23 @@ func _enter_portal(portal: Node2D) -> void:
 	player.set_physics_process(false)
 	player.velocity = Vector2.ZERO
 	player.is_invulnerable = true
+	# La recompensa elegida es la del cofre de la proxima sala; el resto
+	# de portales se cierran.
+	var chosen: String = portal.get("reward")
+	_room_reward = chosen if chosen in ["weapon", "relic", "heal"] else ""
+	for other in get_tree().get_nodes_in_group("Pickup"):
+		if other != portal and other.has_method("close"):
+			other.close()
 
-	# El portal se traga al jugador y la pantalla se va a negro.
+	# El portal se traga al jugador en espiral, la camara se acerca y la
+	# pantalla se va a negro.
+	var center: Vector2 = portal.vortex_global_position()
 	var suck := create_tween().set_parallel(true)
-	suck.tween_property(player, "global_position", portal.global_position + Vector2(0, -20), 0.3)
-	suck.tween_property(player, "scale", _player_scale * 0.15, 0.3)
-	suck.tween_property(player, "rotation", TAU, 0.3)
+	suck.tween_property(player, "global_position", center, 0.45).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	suck.tween_property(player, "scale", _player_scale * 0.1, 0.45).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	suck.tween_property(player, "rotation", TAU * 2.0, 0.45)
+	suck.tween_method(_zoom_camera_to.bind(center), 0.0, 1.0, 0.5)
+	Combat.shake(6.0)
 	# Destello del color del portal y luego negro.
 	var flash_color: Color = portal.get("color") if portal.get("color") != null else Color.WHITE
 	_fade.color = Color(flash_color.lightened(0.6), 0.0)
@@ -333,19 +399,47 @@ func _enter_portal(portal: Node2D) -> void:
 
 	spawner.next_room()
 	_build_room()
-	player.global_position = RoomBuilder.ENTRY_POINT
-	player.scale = _player_scale
+	_zoom_camera_to(0.0, Vector2.ZERO)
 	player.rotation = 0.0
 	player.last_direction = Vector2.RIGHT
 
+	# Portal de llegada: el jugador sale despedido de el y se cierra detras.
+	var arrival := Portal.new()
+	arrival.mode = "exit"
+	arrival.color = BIOMES[maxi(_biome, 0)]["accent"]
+	arrival.position = RoomBuilder.ENTRY_POINT + Vector2(-30, 10)
+	add_child(arrival)
+	var start: Vector2 = arrival.vortex_global_position()
+	player.global_position = start
+	player.scale = _player_scale * 0.1
+
 	var reveal := create_tween()
-	reveal.tween_property(_fade, "color:a", 0.0, 0.45)
+	reveal.tween_property(_fade, "color:a", 0.0, 0.35)
 	await reveal.finished
+	Sfx.play("teleport", 0.1)
+	var spit := create_tween().set_parallel(true).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	spit.tween_property(player, "global_position", RoomBuilder.ENTRY_POINT + Vector2(60, 20), 0.4)
+	spit.tween_property(player, "scale", _player_scale, 0.4)
+	await spit.finished
+	Combat.shake(4.0)
 	player.set_physics_process(true)
 	player.is_invulnerable = false
 	await get_tree().create_timer(0.5).timeout
 	spawner.active = true
 	_transitioning = false
+
+
+## Acerca la camara (anclada arriba a la izquierda) hacia `focus`.
+## t = 0 deja la vista normal; t = 1 es el zoom maximo.
+func _zoom_camera_to(t: float, focus: Vector2) -> void:
+	if _camera == null:
+		return
+	var view_size := get_viewport().get_visible_rect().size
+	var zoom := lerpf(1.0, 1.6, t)
+	var view := view_size / zoom
+	var target := (focus - view / 2.0).clamp(Vector2.ZERO, view_size - view)
+	_camera.zoom = Vector2(zoom, zoom)
+	_camera.position = Vector2.ZERO.lerp(target, t)
 
 
 func _find_player() -> MainCharacter:
